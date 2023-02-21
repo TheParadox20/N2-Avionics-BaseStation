@@ -11,6 +11,7 @@ import LineChart from '../components/LineChart';
 import { useMetrics } from '../hooks/useMetrics';
 import Controls from '../components/Controls';
 import Video from '../components/Video';
+import Map from '../components/Map';
 
 //mapbox css
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -19,6 +20,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 const { publicRuntimeConfig } = getConfig();
 
 function Home() {
+	let [stream,setStream] = useState(true);
+
 	const altitudeChartRef = useRef();
 	const velocityChartRef = useRef();
 	const accelerationChartRef = useRef();
@@ -209,12 +212,21 @@ function Home() {
 				</div>
 				<div className="grid grid-cols-1 lg:grid-cols-3">
 					<div>
-						<Video
-							url={
-								publicRuntimeConfig.CAMERA_URL ||
-								'http://192.168.0.103:81/stream'
-							}
-						/>
+						<div className='choice'>
+							<button id={stream?'active':''} onClick={(e)=>{setStream(true)}}>Live Stream</button>
+							<button id={stream?'':'active'} onClick={(e)=>{setStream(false)}}>Map</button>
+						</div>
+						{
+							stream ? 
+							<Video
+								url={
+									publicRuntimeConfig.CAMERA_URL ||
+									'http://192.168.0.103:81/stream'
+								}
+							/>
+							:
+							<Map/>
+						}
 					</div>
 					<div className="lg:order-first w-full lg:w-10/12 lg:col-span-2">
 						<LineChart ref={altitudeChartRef} type="altitude" />
